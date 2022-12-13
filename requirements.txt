@@ -1,6 +1,9 @@
 asgiref==3.5.2
+cffi==1.15.1
+cryptography==38.0.4
 Django==3.2
 djangorestframework==3.12.4
+pycparser==2.21
+PyJWT==2.6.0
 pytz==2022.6
 sqlparse==0.4.3
-tzdata==2022.7
