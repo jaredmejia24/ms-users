@@ -8,40 +8,7 @@ import jwt
 
 import datetime
 
-import pandas
-
-
 class RegisterView(APIView):
-    
-    def post(self, request):
-        SHEET_URL = "https://docs.google.com/spreadsheets/d/1-Wx3MunuVlDT96K_fz18P1HgBUYaxSBjUu16_KyNjDU/gviz/tq?tqx=out:csv"
-        file = pandas.read_csv(SHEET_URL)
-        users = []
-        count = 1
-        for user in file.iterrows():
-            user_data = {}
-            
-            first_name= user[1]['first_name']
-            last_name = user[1]['last_name']
-            user_data["name"] = f"{first_name} {last_name}"
-            
-            first_name = first_name.split()[0].lower()
-            last_names= last_name.split()
-            last_name = last_names[len(last_names)-1].lower()
-            user_data["email"] = f"{first_name}{last_name}{count}@gmail.com"
- 
-            user_data['password'] = "pass1234"
-            
-            users.append(user_data)
-            serializer = UserSerializer(data=user_data)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            
-            count += 1
-            
-        return Response({"status": "success", "users": users})
-
-class SignUpView(APIView):
 
     def post(self, request):
         
