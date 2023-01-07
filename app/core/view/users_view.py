@@ -1,4 +1,4 @@
-from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.exceptions import AuthenticationFailed, NotFound
 from rest_framework.views import APIView, Response
 
 from ..serializer import UserSerializer
@@ -30,10 +30,23 @@ class SelfUserView(APIView):
 class UserViewSet(APIView):
     
     def get(self, request):
-        print("before all")
-        users = User.objects.all()
         
-        print(users)
+        users = User.objects.all()
         serializer = UserSerializer(users, many=True)
+        
+        return Response(serializer.data)
+
+class UserByPkView(APIView):
+    
+    def get(self, request, *args, **kwargs):
+        
+        pk = kwargs['pk']
+        
+        user = User.objects.filter(id=pk).first()
+        
+        if(not user):
+            raise NotFound("User Not Found")
+        
+        serializer = UserSerializer(user)
         
         return Response(serializer.data)
