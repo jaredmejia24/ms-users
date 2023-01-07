@@ -1,0 +1,141 @@
+openapi: 3.0.1
+info:
+  title: API RESTful ms_auth
+  description: Se encarga de gestionar accesos a usuarios a traves de tokens jwt y cookies
+  version: 1.0.0
+servers:
+  - url: http://0.0.0.0:8000/v1/
+tags:
+  - name: register
+    description: Registra un usuario en la base de datos.
+
+  - name: login
+    description: Inicia la sesion de un usuario.
+
+  - name: user
+    description: Manda la informacion del usuario en sesion.
+
+  - name: logout
+    description: Cierra la sesion activa
+
+paths:
+  /register:
+    post:
+      tags:
+        - register
+      summary: registra un usuario y notifica via webhooks a slack
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BodyUserPost"
+        required: true
+
+      responses:
+        200:
+          $ref: "#/components/responses/UserResponse"
+
+  /login:
+    post:
+      tags:
+        - login
+      summary: Loguea a usuario y genera token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BodyUserPostLogin"
+        required: true
+
+      responses:
+        200:
+          $ref: "#/components/responses/TokenResponse"
+  /user:
+    get:
+      tags:
+        - user
+      summary: ...
+      responses:
+        200:
+          $ref: "#/components/responses/UserResponse"
+      security:
+        - cookieAuth: []
+
+  /logout:
+    post:
+      tags:
+        - logout
+      summary: Cierra la sesion del usuario
+      responses:
+        200:
+          $ref: "#/components/responses/LogoutResponse"
+      security:
+        - cookieAuth: []
+
+components:
+  responses:
+    UserResponse:
+      description: ...
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/BodyUserGETRetrieve"
+    LogoutResponse:
+      description: ...
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/LogoutResponse"
+    Unauthorized:
+      description: ...
+    TokenResponse:
+      description: ...
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/TokenResponse"
+        Set-cookie:
+          schema:
+            $ref: "#/components/schemas/TokenResponse"
+  schemas:
+    BodyUserPost:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+    BodyUserPostLogin:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+    BodyUserGETRetrieve:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+    TokenResponse:
+      type: object
+      properties:
+        jwt:
+          type: string
+    LogoutResponse:
+      type: object
+      properties:
+        message:
+          type: string
+
+  securitySchemes:
+    cookieAuth:
+      name: jwt
+      type: apiKey
+      in: cookie
